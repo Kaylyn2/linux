@@ -1,0 +1,28 @@
+#!/bin/bash
+
+FILENAME="web_down.html"
+URL="$2"
+
+# check if file exists. if not, create one.
+if [ ! -f $FILENAME ]; then
+	touch $FILENAME
+fi
+
+# run codes according to the option
+while getopts ":hf" opt; do
+        case ${opt} in
+                h )
+                echo "Usage:"
+                echo "    cmd [-h]                  Display this help message."
+                echo "    cmd [-f] [url]            Download html file from the webpage in 'web_down.html'."
+                exit 0
+                ;;
+		# download html from url, turn off the output, and download it to the web_down.html
+                f ) wget -qO $FILENAME $URL 
+                    echo "$URL" ;;
+		\? )
+                echo "Invalid Option: -$OPTARG" 1>&2
+                exit 1
+                ;;
+        esac
+done

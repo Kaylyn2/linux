@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# check the option or not
+if [ "$#" -eq 2 ]; then
+        # check file is a regular file	
+	filename="$2"
+	if [ ! -f $filename ]; then
+		echo "File does not exist!"
+	fi
+
+	# if there is an option, run below code
+	while getopts ":hn" opt; do
+  	case ${opt} in
+    		h )
+      		echo "Usage:"
+      		echo "    cmd [-h]                  Display this help message."
+      		echo "    cmd [-n] [filename]       Display the contents of file with line numbers."
+      		echo "    cmd [filename]            Display the contents of file without line numbers."
+      		exit 0
+      		;;
+    		n ) cat -n $filename |sed -r "s/^\s+//g"| sed "s/^[0-9]*/&\. /g" ;;
+    		\? )
+      		echo "Invalid Option: -$OPTARG" 1>&2
+      		exit 1
+      		;;
+  	esac
+	done
+
+# if there is no option, run below code
+elif [ "$#" -eq 1 ] ; then
+	file="$1"
+	if [ ! -f $file ]; then
+                echo "File does not exist!"
+        fi
+	cat $file
+	exit 1
+fi

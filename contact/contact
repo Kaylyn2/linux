@@ -1,0 +1,104 @@
+#!/bin/bash
+
+FILENAME=contact_book
+
+# check if file exists. if not, create one.
+if [ ! -f $FILENAME ]; then
+        touch $FILENAME
+fi 
+
+# add a new contact 
+add()
+{
+	# check file exists, if not, create one.
+	for file in ./* ; do
+		if [[ ! -e $FILENAME ]]; then
+			touch $FILENAME
+			echo "File $FILENAME created!"
+		fi
+	done
+	
+	# let user enter the contact information
+
+	echo "Enter the name: "
+	read name
+	echo "Enter an email: "
+        read email
+	echo "Enter a phone number: "
+	read phone
+
+	#record=`echo $name $email $phone`
+	#record=`printf "%-10s %-10s %-10s", $name, $email, $phone,`
+	record=`printf '%-20s|\n' $name $email $phone`
+	echo $record >> $FILENAME
+	echo "Record Inserted!"		
+}
+
+# display the output
+display()
+{
+	# check file exists.
+        for file in ./* ; do
+                if [[ ! -e $FILENAME ]]; then
+                        echo "File $FILENAME does not exist!"	
+		fi
+        done
+
+	# display the contact list
+
+	cat $FILENAME	
+}
+
+# information about option
+guide()
+{ 
+	echo " ------------THE CONTACT LIST----------"
+        echo "Contact information"
+        echo "Name, Address, Email, Phone number"
+        echo "Options"
+        echo "-a: Add a new contact"
+        echo "-r: Remove a new contact"
+        echo "-d: Display the contact list"
+	echo "Example) ./contact -a"
+}
+
+# remove the contact
+remove()
+{
+	echo "Enter the name that you want to remove the contact info: "
+	read name_remove
+	
+	# check the name that user want to remove is existing in the list
+	len=`cat $FILENAME | grep $name_remove | wc -w`
+	if [ $len -gt 0 ]
+	then
+		remove_one=`cat $FILENAME | grep $name_remove`
+		
+		# get the confirmation from user
+		echo "Are you sure remove $remove_one? (y/n)"
+		read sure
+		if [[ $sure = "y" ]]; then
+			sed -i s/"$remove_one"//g $FILENAME
+			sed -i /^$/d $FILENAME
+			echo "Record Deleted!"
+		else
+			echo "remove is cancelled."
+		fi
+	else
+		echo "Error: name is not existing!"
+	fi	
+}
+
+# run functions according to the options
+while getopts ":adrh" opt; do
+	case ${opt} in
+		a ) add ;;
+		d ) display ;;
+		r ) remove ;;
+		h ) guide ;;
+		\? ) 
+		echo "Usage: cmd [-a] [-d] [-r]. If you want to see more help, [-h]"
+		exit 1 ;;
+	esac
+done
+	
