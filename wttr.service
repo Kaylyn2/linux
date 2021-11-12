@@ -1,0 +1,10 @@
+[Unit]
+Description=My wttr service
+After=network.target
+
+[Service]
+ExecStart=/home/vagrant/Documents/week10/wttr.sh
+
+
+[Install]
+WantedBy=multi-user.target
